@@ -9,6 +9,13 @@
 -- @function [parent=#Scene] render 
 -- @param self
 -- @param #cc.Renderer renderer
+-- @return Scene#Scene self (return value: cc.Scene)
+        
+--------------------------------
+-- 
+-- @function [parent=#Scene] getDefaultCamera 
+-- @param self
+-- @return Camera#Camera ret (return value: cc.Camera)
         
 --------------------------------
 --  creates a new Scene object with a predefined Size 
@@ -31,6 +38,7 @@
 -- @param #cc.Node child
 -- @param #int zOrder
 -- @param #int tag
+-- @return Scene#Scene self (return value: cc.Scene)
 
 --------------------------------
 -- 

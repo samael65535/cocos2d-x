@@ -480,27 +480,30 @@ InnerActionFrame::InnerActionFrame()
 
 void InnerActionFrame::onEnter(Frame *nextFrame, int currentFrameIndex)
 {
-    int start = _startFrameIndex;
-    int end = _endFrameIndex;
-    auto actiontimeline = static_cast<ActionTimeline*>(_node->getActionByTag(_node->getTag()));
+    auto innerActiontimeline = static_cast<ActionTimeline*>(_node->getActionByTag(_node->getTag()));
+    if( nullptr == innerActiontimeline)
+        return;
+    
     if (InnerActionType::SingleFrame == _innerActionType)
     {
-        actiontimeline->gotoFrameAndPause(_singleFrameIndex);
+        innerActiontimeline->gotoFrameAndPause(_singleFrameIndex);
         return;
     }
     
+    int innerStart = _startFrameIndex;
+    int innerEnd = _endFrameIndex;
     if (_enterWithName)
     {
         if (_animationName == AnimationAllName)
         {
-            start = 0;
-            end = actiontimeline->getDuration();
+            innerStart = 0;
+            innerEnd = innerActiontimeline->getDuration();
         }
-        else if(actiontimeline->IsAnimationInfoExists(_animationName))
+        else if(innerActiontimeline->IsAnimationInfoExists(_animationName))
         {
-            AnimationInfo info = actiontimeline->getAnimationInfo(_animationName);
-            start = info.startIndex;
-            end = info.endIndex;
+            AnimationInfo info = innerActiontimeline->getAnimationInfo(_animationName);
+            innerStart = info.startIndex;
+            innerEnd = info.endIndex;
         }
         else
         {
@@ -508,17 +511,24 @@ void InnerActionFrame::onEnter(Frame *nextFrame, int currentFrameIndex)
         }
     }
     
+    int duration = _timeline->getActionTimeline()->getDuration();
+    int odddiff = duration - _frameIndex - innerEnd + innerStart;
+    if (odddiff < 0)
+    {
+       innerEnd += odddiff;
+    }
+    
     if (InnerActionType::NoLoopAction == _innerActionType)
     {
-        actiontimeline->gotoFrameAndPlay(start, end, false);
+        innerActiontimeline->gotoFrameAndPlay(innerStart, innerEnd, false);
     }
     else if (InnerActionType::LoopAction == _innerActionType)
     {
-        actiontimeline->gotoFrameAndPlay(start, end, true);
+        innerActiontimeline->gotoFrameAndPlay(innerStart, innerEnd, true);
     }
 }
 
-void InnerActionFrame::setStartFrameIndex(int frameIndex) throw()
+void InnerActionFrame::setStartFrameIndex(int frameIndex)
 {
     if(_enterWithName)
     {
@@ -529,7 +539,7 @@ void InnerActionFrame::setStartFrameIndex(int frameIndex) throw()
 }
 
 
-void InnerActionFrame::setEndFrameIndex(int frameIndex) throw()
+void InnerActionFrame::setEndFrameIndex(int frameIndex)
 {
     if(_enterWithName)
     {
@@ -539,7 +549,7 @@ void InnerActionFrame::setEndFrameIndex(int frameIndex) throw()
     _endFrameIndex = frameIndex;
 }
 
-void InnerActionFrame::setAnimationName(const std::string& animationName) throw()
+void InnerActionFrame::setAnimationName(const std::string& animationName)
 {
     if(!_enterWithName)
     {
