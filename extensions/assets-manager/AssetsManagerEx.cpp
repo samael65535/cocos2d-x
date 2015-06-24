@@ -264,9 +264,6 @@ const std::string& AssetsManagerEx::getStoragePath() const
 
 void AssetsManagerEx::setStoragePath(const std::string& storagePath)
 {
-    if (_storagePath.size() > 0)
-        _fileUtils->removeDirectory(_storagePath);
-
     _storagePath = storagePath;
     adjustPath(_storagePath);
     _fileUtils->createDirectory(_storagePath);
@@ -358,7 +355,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             }
             
             // Create a file to store current file.
-            FILE *out = fopen(fullPath.c_str(), "wb");
+            FILE *out = fopen(FileUtils::getInstance()->getSuitableFOpen(fullPath).c_str(), "wb");
             if (!out)
             {
                 CCLOG("AssetsManagerEx : can not create decompress destination file %s\n", fullPath.c_str());

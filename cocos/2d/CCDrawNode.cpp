@@ -83,7 +83,8 @@ static inline Vec2 v2fforangle(float _a_)
 
 static inline Vec2 v2fnormalize(const Vec2 &p)
 {
-    Vec2 r = Vec2(p.x, p.y).getNormalized();
+    Vec2 r(p.x, p.y);
+    r.normalize();
     return v2f(r.x, r.y);
 }
 
@@ -274,6 +275,8 @@ bool DrawNode::init()
         glGenBuffers(1, &_vboGLPoint);
         glBindBuffer(GL_ARRAY_BUFFER, _vboGLPoint);
         glBufferData(GL_ARRAY_BUFFER, sizeof(V2F_C4B_T2F)*_bufferCapacityGLPoint, _bufferGLPoint, GL_STREAM_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
     CHECK_GL_ERROR_DEBUG();
